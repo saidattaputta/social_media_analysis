@@ -1,65 +1,114 @@
 # Social Media Ads — Purchase Prediction Analysis
 
-A notebook-based binary classification project using a social-media advertising dataset. The analysis explores how customer age and estimated salary relate to purchase outcomes and compares Decision Tree and Random Forest classifiers.
+A notebook-based classification case study using a social-media advertising dataset. The analysis explores whether customer age and estimated salary can help classify purchase outcomes, and compares a tuned Decision Tree with a Random Forest classifier.
 
 ## Objective
 
-Use customer demographic and salary attributes to classify whether an individual in the dataset purchased after exposure to a social-media advertisement.
+Build and compare baseline tree-based classifiers for the binary Purchased outcome, then interpret the results using held-out test metrics.
 
 ## Dataset
 
-The notebook loads `social_ads.csv` from a Kaggle dataset path. The working fields include:
+The notebook reads social_ads.csv from a Kaggle dataset path.
 
-- `Age`
-- `EstimatedSalary`
-- `Purchased` (binary target)
+| Dataset attribute | Value |
+|---|---:|
+| Rows | 400 |
+| Columns | 3 |
+| Features | Age, EstimatedSalary |
+| Target | Purchased |
+| Non-purchase records | 257 |
+| Purchase records | 143 |
 
-The dataset itself is not included in the repository; the notebook currently expects it in the Kaggle input environment.
+The dataset is not committed to this repository. The notebook currently expects it in the Kaggle input environment.
+
+## Results
+
+The notebook uses a train/test split with 80 test records (52 non-purchases and 28 purchases).
+
+### Model comparison
+
+| Model | Training accuracy | Test accuracy |
+|---|---:|---:|
+| Tuned Decision Tree | 96.25% | 83.75% |
+| Random Forest | 99.69% | 90.00% |
+
+The Decision Tree GridSearchCV result reports:
+
+- Best parameters: criterion = entropy, max_depth = 8, min_samples_split = 5
+- Best cross-validation accuracy: **90.625%**
+- Test accuracy: **83.75%**
+
+The Random Forest test classification report is:
+
+| Class | Precision | Recall | F1-score | Support |
+|---|---:|---:|---:|---:|
+| Not purchased (0) | 0.96 | 0.88 | 0.92 | 52 |
+| Purchased (1) | 0.81 | 0.93 | 0.87 | 28 |
+| **Accuracy** |  |  | **0.90** | **80** |
+
+Random Forest's saved confusion matrix is:
+
+\`\`\`text
+[[46, 6],
+ [ 2, 26]]
+\`\`\`
+
+For the purchase class, the model identifies 26 of 28 test purchases (recall 92.9%) with 6 false positives among the 52 non-purchase records. The saved notebook comparison therefore favours Random Forest on this split.
+
+### Decision Tree depth comparison
+
+The notebook records the following test accuracies before final parameter selection:
+
+| Maximum depth | Train accuracy | Test accuracy |
+|---:|---:|---:|
+| 2 | 91.88% | 91.25% |
+| 4 | 93.13% | 91.25% |
+| 6 | 95.00% | 86.25% |
+| 8 | 97.50% | 85.00% |
+
+These are an earlier depth sweep and should be kept distinct from the later GridSearchCV model result of 83.75% test accuracy.
 
 ## Workflow
 
-1. Load the dataset and inspect shape, missing values, and target distribution.
-2. Explore age and estimated-salary distributions.
-3. Visualize the relationship between age, salary, and purchase label.
-4. Split the data into training and testing subsets.
-5. Train a baseline Decision Tree classifier.
-6. Compare model depths and tune selected Decision Tree parameters using cross-validation.
-7. Train and tune a Random Forest classifier.
-8. Compare training and test accuracy and inspect confusion matrices and classification reports.
-
-## Models and Evaluation
-
-- Decision Tree Classifier
-- Random Forest Classifier
-- GridSearchCV with five-fold cross-validation
-- Accuracy, confusion matrix, and classification report
-
-The notebook calculates metrics interactively. No single headline performance figure is stated here because it should be taken from a fresh execution of the notebook rather than assumed from a previous kernel state.
-
-## Run Locally
-
-Install the core dependencies:
-
-```bash
-pip install pandas numpy matplotlib seaborn scikit-learn jupyter
-```
-
-Download the source dataset from its Kaggle page and update the input path in the notebook. Open `social-media-analysis.ipynb` in Jupyter and execute the cells in order.
+1. Load the 400-row dataset.
+2. Inspect the purchase-class distribution.
+3. Explore Age and EstimatedSalary.
+4. Create training and test partitions.
+5. Fit a baseline Decision Tree.
+6. Compare selected tree depths.
+7. Tune the Decision Tree using five-fold GridSearchCV.
+8. Fit and evaluate a Random Forest.
+9. Compare train/test accuracy, confusion matrices, and class-wise metrics.
 
 ## Repository Contents
 
-```text
-.
-└── social-media-analysis.ipynb
-```
+- social-media-analysis.ipynb — exploration, model training, tuning, and evaluation
+- README.md — project documentation
+
+The Kaggle source CSV is not stored in this repository.
+
+## Technology
+
+Python, pandas, NumPy, Matplotlib, Seaborn, scikit-learn, DecisionTreeClassifier, RandomForestClassifier, GridSearchCV, and Jupyter Notebook.
+
+## Reproducing the Analysis
+
+Install the notebook dependencies:
+
+\`\`\`bash
+pip install pandas numpy matplotlib seaborn scikit-learn jupyter
+\`\`\`
+
+Download the source dataset from Kaggle and update the notebook's input path if running locally. Execute the notebook cells in order.
 
 ## Limitations
 
-- The notebook uses only age and estimated salary as predictive features.
-- A random train/test split may not represent future advertising audiences.
-- Accuracy alone can hide class imbalance and unequal error costs.
-- The dataset and modeling exercise do not establish causal advertising effectiveness.
-- The Kaggle-specific input path must be changed for local execution.
+- The model uses only Age and EstimatedSalary.
+- The reported metrics come from one saved train/test split of 80 records.
+- The positive class contains only 28 test examples, so one or two changed predictions materially affect recall.
+- Random Forest training accuracy is 99.69%, compared with 90.00% test accuracy; this gap suggests possible overfitting.
+- Accuracy on a small split does not demonstrate generalization to new campaigns, audiences, or platforms.
+- The dataset does not establish that seeing an advertisement caused a purchase.
 
 ---
 
