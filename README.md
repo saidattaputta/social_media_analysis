@@ -61,6 +61,8 @@ Download the source dataset from its Kaggle page and update the input path in th
 - The dataset and modeling exercise do not establish causal advertising effectiveness.
 - The Kaggle-specific input path must be changed for local execution.
 
-## Author
+---
 
-Sai Datta Putta
+**Sai Datta Putta**
+
+[LinkedIn](https://www.linkedin.com/in/sai-datta-putta/)
